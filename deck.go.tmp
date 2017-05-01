@@ -1,0 +1,55 @@
+package main
+
+import (
+	"math/rand"
+	"fmt"
+)
+
+/*Class representing a deck. The first time we create, we seed the static 
+deck with the list of unique card integers. Each object instantiated simply
+makes a copy of this object and shuffles it. */
+type Deck struct {
+	cards []*Card
+}
+
+func NewDeck() (d *Deck){
+	return &Deck{cards: []*Card{}}
+}
+
+func (d *Deck) Shuffle() {
+	d.GetFullDeck()
+	for i := range d.cards {
+		j := rand.Intn(i + 1)
+		d.cards[i], d.cards[j] = d.cards[j], d.cards[i]
+	}
+}
+
+func (d *Deck) Draw(n int) (cards []*Card) {
+	cards = []*Card{}
+	if n == 1 {
+		var x *Card
+		x, d.cards = d.cards[len(d.cards)-1], d.cards[:len(d.cards)-1]
+		cards = []*Card{x}
+	} else {
+		for i := 0; i < n; i++ {
+			cards = append(cards, d.Draw(1)...)
+		}
+	}
+	return
+}
+
+func (d *Deck) String() string {
+	return PrintPrettyCards(d.cards)
+}
+
+func (d *Deck) GetFullDeck() *Deck {
+	fmt.Println(len(d.cards))
+	if len(d.cards) < 1 {
+		for _, rank := range StrRanks {
+			for suit, _ := range CharSuitToIntSuit {
+				d.cards = append(d.cards, NewCard(string(rank) + string(suit)))
+			}
+		}
+	}
+	return d
+}

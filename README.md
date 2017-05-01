@@ -1,0 +1,1 @@
+Kiev poker hand evaluator written in go and using perfect hashing function
